@@ -12,3 +12,25 @@ services:
       - ./app:/app
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    volumes:
+      - dev-db-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootdevdb
+      - MYSQL_DATABASE=devdb
+      - MYSQL_USER=devuser
+      - MYSQL_PASSWORD=changeme
+    ports:
+      - "3306:3306"
+
+volumes:
+  dev-db-data:
