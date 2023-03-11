@@ -3,6 +3,7 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
 
+
 # Create your models here.
 class MyUserManager(BaseUserManager):
     """Manager for custom User"""
@@ -28,8 +29,10 @@ class MyUserManager(BaseUserManager):
             password=password,
         )
         user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Custom User"""
@@ -45,9 +48,3 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
