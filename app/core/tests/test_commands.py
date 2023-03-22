@@ -2,7 +2,7 @@
 Test custom Django management commands
 """
 
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 from MySQLdb import OperationalError as MySQLError
 
@@ -33,11 +33,3 @@ class CommandTests(SimpleTestCase):
 
         self.assertEqual(patched_check.call_count, 6)
         patched_check.assert_called_with(databases=['default'])
-
-    def test_seed_data_files(self, patched_check):
-        with patch('builtins.open', mock_open(read_data='tags_file')) as m:
-            with open('/app/core/seed_data/tags.json') as h:
-                result = h.read()
-
-        m.assert_called_once_with('/app/core/seed_data/tags.json')
-        self.assertEqual(result, 'tags_file')

@@ -1,38 +1,31 @@
+"""
+Django command to seed initital data
+"""
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
-from portfolio.models import Tag, TagGroup, Character, Artist
+from portfolio.models import Tag, Character
 from datetime import date
 import json
-import os
 
 
 class Command(BaseCommand):
+    """Django command to read files and populate data"""
 
     def handle(self, *args, **options):
+        """Entrypoint for command"""
+
+        self.create_characters()
+        self.create_tags()
+        # self.create_artists(data['artists'])
+
+        self.stdout.write(self.style.SUCCESS('Seeding Finished!'))
+
+    def create_characters(self):
+
         data = {}
+        with open('/app/core/seed_data/characters.json', 'r') as file:
+            data = json.load(file)
 
-        # Load data into memory
-        self.stdout.write("seeding data...")
-        with open(f'{os.getcwd()}/seed_data/characters.json', 'r') as file:
-            data['characters'] = json.load(file)
-
-        with open(f'{os.getcwd()}/seed_data/tag_groups.json', 'r') as file:
-            data['tag_groups'] = json.load(file)
-
-        with open(f'{os.getcwd()}/seed_data/tags.json', 'r') as file:
-            data['tags'] = json.load(file)
-
-        with open(f'{os.getcwd()}/seed_data/artists.json', 'r') as file:
-            data['artists'] = json.load(file)
-
-        self.create_characters(self, data['characters'])
-        self.create_tag_groups(data['tag_groups'])
-        self.create_tags(data['tags'])
-        self.create_artists(data['artists'])
-
-        self.stdout.write("seeding finished.")
-
-    def create_characters(self, data):
         for obj in data:
             try:
                 character = Character.objects.get(name=obj['name'])
@@ -49,23 +42,14 @@ class Command(BaseCommand):
                 self.stdout.write(f'Creating Character Object: \
                                   {character.name}')
 
-    def create_tag_groups(self, data):
-        for obj in data:
-            tag_group, created = TagGroup.objects.get_or_create(
-                name=obj['name']
-            )
-            if not created:
-                self.stdout.write(
-                    f'TagGroup {tag_group.name} already exists, \
-                    skipping creation...'
-                )
-            else:
-                self.stdout.write(f'Creating TagGroup Object: \
-                                  {tag_group.name}')
+        self.stdout.write(self.style.SUCCESS('Finished seeding characters.'))
 
-    def create_tags(self, data):
+    def create_tags(self):
+        data = {}
+        with open('/app/core/seed_data/tags.json', 'r') as file:
+            data = json.load(file)
+
         for obj in data:
-            obj['group'] = TagGroup.objects.get(id=obj['group'])
             tag, created = Tag.objects.get_or_create(**obj)
 
             if not created:
@@ -74,15 +58,3 @@ class Command(BaseCommand):
                 )
             else:
                 self.stdout.write(f'Creating Tag Object: {tag.name}')
-
-    def create_artists(self, data):
-        # TODO: Clean URLs of query string param on JSON file
-        for obj in data:
-            artist, created = Artist.objects.get_or_create(**obj)
-
-            if not created:
-                self.stdout.write(
-                    f'Artist {artist} already exists, skipping creation...'
-                )
-            else:
-                self.stdout.write(f'Creating Artist object: {artist.name}')
