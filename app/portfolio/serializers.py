@@ -10,3 +10,9 @@ class CharacterSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'slug': {'required': False}
         }
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Tag
+        fields = '__all__'

@@ -33,8 +33,9 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.name = normalize_name(self.name)
+        return super().save(*args, **kwargs)
 
 
 class Character(models.Model):

@@ -1,5 +1,5 @@
-from portfolio.models import Character
-from portfolio.serializers import CharacterSerializer
+from portfolio.models import Character, Tag
+from portfolio.serializers import CharacterSerializer, TagSerializer
 
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -27,3 +27,14 @@ class CharacterViewSet(viewsets.ModelViewSet):
             return [authenticator() for authenticator in authenticators]
 
         return super().get_authenticators()
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    """
+    View to CRUD tags
+    All endpoints are private
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAdminUser, IsAuthenticated]
