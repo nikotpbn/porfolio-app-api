@@ -38,7 +38,8 @@ class PrivateEndpointsTests(TestCase):
             'name': 'Some Comic Character',
             'sex': 'F',
             'alive': True,
-            'first_appearance': date.today()
+            'first_appearance': date.today(),
+            'created_by': self.user.id
         }
         res = self.client.post(
             character_create_list_url(),
@@ -53,7 +54,8 @@ class PrivateEndpointsTests(TestCase):
             name='Some Comic Character',
             sex='F',
             alive=True,
-            first_appearance=date.today()
+            first_appearance=date.today(),
+            created_by=self.user
         )
         payload = {'name': 'Altered Comic Character Name'}
         res = self.client.patch(character_detail_url(c.id), payload)
@@ -65,7 +67,8 @@ class PrivateEndpointsTests(TestCase):
             name='Some Comic Character',
             sex='F',
             alive=True,
-            first_appearance=date.today()
+            first_appearance=date.today(),
+            created_by=self.user
         )
         res = self.client.delete(character_detail_url(c.id))
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
@@ -74,12 +77,18 @@ class PrivateEndpointsTests(TestCase):
 class PublicEndpointsTests(TestCase):
 
     def setUp(self):
+        user = get_user_model().objects.create_user(
+            name='Test User',
+            email='test@example.com',
+            password='testpass123'
+        )
         self.c = models.Character(
             page_id='12345',
             name='Some Comic Character',
             sex='F',
             alive=True,
-            first_appearance=date.today()
+            first_appearance=date.today(),
+            created_by=user
         )
         self.client = APIClient()
 

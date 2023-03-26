@@ -25,7 +25,8 @@ class PortfolioModelsTests(TestCase):
             name='Some Comic Character',
             sex='F',
             alive=True,
-            first_appearance=date.today()
+            first_appearance=date.today(),
+            created_by=self.user
         )
 
         self.assertEqual(character.slug, 'some-comic-character')
@@ -50,7 +51,8 @@ class PortfolioModelsTests(TestCase):
                 name=name,
                 sex='F',
                 alive=True,
-                first_appearance=date.today()
+                first_appearance=date.today(),
+                created_by=self.user
             )
             self.assertEqual(character.name, expected)
 
