@@ -71,6 +71,7 @@ class Artist(models.Model):
     twitter = models.CharField(max_length=128, blank=True, null=True)
     oficial = models.CharField(max_length=128, blank=True, null=True)
     slug = models.SlugField(max_length=255, unique=True)
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

@@ -1,5 +1,6 @@
 """
-Test endpoints
+Test Character Model endpoints
+TODO: Test Endpoint logged in but not admin.
 """
 from rest_framework.test import APIClient
 from rest_framework import status

@@ -71,3 +71,19 @@ class PortfolioModelsTests(TestCase):
                 created_by=self.user
             )
             self.assertEqual(tag.name, expected)
+
+    def test_artist_creation_name_and_slug(self):
+        """Test normalize_name on Artist .save method"""
+        samples = [
+            ['ChaRacTer OnE ', 'Character One', 'character-one'],
+            [' cHaRaCteR tWO ', 'Character Two', 'character-two'],
+            [' chAraCtER THREe ', 'Character Three', 'character-three'],
+        ]
+
+        for name, expected_name, expected_slug in samples:
+            artist = models.Artist.objects.create(
+                name=name,
+                created_by=self.user
+            )
+            self.assertEqual(artist.name, expected_name)
+            self.assertEqual(artist.slug, expected_slug)

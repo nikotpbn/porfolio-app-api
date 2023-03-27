@@ -17,3 +17,12 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Tag
         fields = '__all__'
+
+
+class ArtistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Artist
+        fields = '__all__'
+        extra_kwargs = {
+            'slug': {'required': False}
+        }
