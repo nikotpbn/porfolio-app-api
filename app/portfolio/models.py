@@ -9,7 +9,7 @@ import os
 
 def image_file_path(instance, filename):
     ext = filename.split('.')[-1]
-    filename = "    {}.{}".format(uuid.uuid4().hex, ext)
+    filename = "{}.{}".format(uuid.uuid4().hex, ext)
     upload_path = os.path.join('uploads', 'image', filename)
 
     return upload_path
@@ -80,3 +80,32 @@ class Artist(models.Model):
         self.name = normalize_name(self.name)
         self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
+
+
+class Art(models.Model):
+    TYPE_CHOICES = [
+        (1, 'Drawing'),
+        (2, 'Painting'),
+        (3, 'Sculpture'),
+        (4, 'Tatoo'),
+        (5, 'Photo'),
+        (6, 'Digital')
+    ]
+
+    title = models.CharField(max_length=50)
+    subtitle = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    image = models.ImageField(null=True, upload_to=image_file_path)
+    type = models.IntegerField(choices=TYPE_CHOICES)
+    tags = models.ManyToManyField(Tag)
+    characters = models.ManyToManyField(Character)
+    artist = models.ForeignKey(
+        Artist,
+        on_delete=models.CASCADE,
+        related_name='artworks'
+    )
+    created_at = models.DateField(null=False, default=now)
+    created_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
