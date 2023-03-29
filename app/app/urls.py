@@ -20,15 +20,6 @@ from drf_spectacular.views import (
 from django.contrib import admin
 from django.urls import path, include
 
-# from rest_framework import routers
-
-from user.urls import router as user_router # noqa
-from portfolio.urls import router as portfolio_router # noqa
-
-# router = routers.DefaultRouter()
-# router.registry.extend(user_router.registry)
-# router.registry.extend(portfolio_router.registry)
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

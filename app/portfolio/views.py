@@ -1,16 +1,20 @@
 from portfolio.models import (
     Character,
     Tag,
-    Artist
+    Artist,
+    Art
 )
 from portfolio.serializers import (
     CharacterSerializer,
     TagSerializer,
-    ArtistSerializer
+    ArtistSerializer,
+    ArtSerializer
 )
-
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+)
 from rest_framework.authentication import TokenAuthentication
 
 
@@ -55,6 +59,29 @@ class ArtistViewSet(viewsets.ModelViewSet):
     """
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+
+    def get_permissions(self):
+        if not self.request.method == 'GET':
+            permissions = [IsAuthenticated, IsAdminUser]
+            return [permission() for permission in permissions]
+
+        return super().get_permissions()
+
+    def get_authenticators(self):
+        if not self.request.method == 'GET':
+            authenticators = [TokenAuthentication]
+            return [authenticator() for authenticator in authenticators]
+
+        return super().get_authenticators()
+
+
+class ArtViewSet(viewsets.ModelViewSet):
+    """
+    View to CRUD art
+    Only reading is open to public
+    """
+    queryset = Art.objects.all()
+    serializer_class = ArtSerializer
 
     def get_permissions(self):
         if not self.request.method == 'GET':

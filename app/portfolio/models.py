@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils.timezone import now # noqa
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 
@@ -97,15 +96,20 @@ class Art(models.Model):
     description = models.TextField(blank=True)
     image = models.ImageField(null=True, upload_to=image_file_path)
     type = models.IntegerField(choices=TYPE_CHOICES)
-    tags = models.ManyToManyField(Tag)
-    characters = models.ManyToManyField(Character)
+    tags = models.ManyToManyField(Tag, blank=True)
+    characters = models.ManyToManyField(Character, blank=True)
     artist = models.ForeignKey(
         Artist,
         on_delete=models.CASCADE,
         related_name='artworks'
     )
-    created_at = models.DateField(null=False, default=now)
+    created_at = models.DateTimeField(null=False, auto_now_add=True)
     created_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.title = normalize_name(self.title)
+        self.subtitle = normalize_name(self.subtitle)
+        return super().save(*args, **kwargs)
