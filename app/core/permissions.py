@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+
 class IsAuthenticatedAndIsAdminOrReadOnly(permissions.BasePermission):
     """
     Global permission to check if request is a safe method

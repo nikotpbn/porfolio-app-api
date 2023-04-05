@@ -26,7 +26,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
     Only reading is open to public
     """
     permission_classes = [IsAuthenticatedAndIsAdminOrReadOnly]
-    authentication_classes =[TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     queryset = Character.objects.all()
     serializer_class = CharacterSerializer
 
@@ -48,7 +48,7 @@ class ArtistViewSet(viewsets.ModelViewSet):
     Only reading is open to public
     """
     permission_classes = [IsAuthenticatedAndIsAdminOrReadOnly]
-    authentication_classes =[TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
 
@@ -59,6 +59,6 @@ class ArtViewSet(viewsets.ModelViewSet):
     Only reading is open to public
     """
     permission_classes = [IsAuthenticatedAndIsAdminOrReadOnly]
-    authentication_classes =[TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     queryset = Art.objects.all()
     serializer_class = ArtSerializer

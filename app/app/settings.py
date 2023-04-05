@@ -138,3 +138,9 @@ REST_FRAMEWORK = {
     # YOUR SETTINGS
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Art Portfolios API',
+    'DESCRIPTION': 'Collection of professional artists and artwork',
+    'PREPROCESSING_HOOKS': ['core.hooks.custom_preprocessing_hook']
+}
