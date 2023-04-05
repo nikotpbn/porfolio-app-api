@@ -10,6 +10,8 @@ from portfolio.serializers import (
     ArtistSerializer,
     ArtSerializer
 )
+from core.permissions import IsAuthenticatedAndIsAdminOrReadOnly
+
 from rest_framework import viewsets
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -23,22 +25,10 @@ class CharacterViewSet(viewsets.ModelViewSet):
     View to CRUD characters
     Only reading is open to public
     """
+    permission_classes = [IsAuthenticatedAndIsAdminOrReadOnly]
+    authentication_classes =[TokenAuthentication]
     queryset = Character.objects.all()
     serializer_class = CharacterSerializer
-
-    def get_permissions(self):
-        if not self.request.method == 'GET':
-            permissions = [IsAuthenticated, IsAdminUser]
-            return [permission() for permission in permissions]
-
-        return super().get_permissions()
-
-    def get_authenticators(self):
-        if not self.request.method == 'GET':
-            authenticators = [TokenAuthentication]
-            return [authenticator() for authenticator in authenticators]
-
-        return super().get_authenticators()
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -57,22 +47,10 @@ class ArtistViewSet(viewsets.ModelViewSet):
     View to CRUD artists
     Only reading is open to public
     """
+    permission_classes = [IsAuthenticatedAndIsAdminOrReadOnly]
+    authentication_classes =[TokenAuthentication]
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-
-    def get_permissions(self):
-        if not self.request.method == 'GET':
-            permissions = [IsAuthenticated, IsAdminUser]
-            return [permission() for permission in permissions]
-
-        return super().get_permissions()
-
-    def get_authenticators(self):
-        if not self.request.method == 'GET':
-            authenticators = [TokenAuthentication]
-            return [authenticator() for authenticator in authenticators]
-
-        return super().get_authenticators()
 
 
 class ArtViewSet(viewsets.ModelViewSet):
@@ -80,19 +58,7 @@ class ArtViewSet(viewsets.ModelViewSet):
     View to CRUD art
     Only reading is open to public
     """
+    permission_classes = [IsAuthenticatedAndIsAdminOrReadOnly]
+    authentication_classes =[TokenAuthentication]
     queryset = Art.objects.all()
     serializer_class = ArtSerializer
-
-    def get_permissions(self):
-        if not self.request.method == 'GET':
-            permissions = [IsAuthenticated, IsAdminUser]
-            return [permission() for permission in permissions]
-
-        return super().get_permissions()
-
-    def get_authenticators(self):
-        if not self.request.method == 'GET':
-            authenticators = [TokenAuthentication]
-            return [authenticator() for authenticator in authenticators]
-
-        return super().get_authenticators()
