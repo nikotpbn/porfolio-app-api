@@ -20,6 +20,15 @@ from drf_spectacular.views import (
 from django.contrib import admin
 from django.urls import path, include
 
+from rest_framework import routers
+from user.urls import router as user_router
+from user.api.views import CreateTokenView, ManageUserView
+from portfolio.urls import router as portfolio_router
+
+router = routers.DefaultRouter()
+router.registry.extend(user_router.registry)
+router.registry.extend(portfolio_router.registry)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
@@ -27,6 +36,7 @@ urlpatterns = [
         'api/docs/',
         SpectacularSwaggerView.as_view(url_name='schema'),
         name='swagger-ui'),
-    path('api/', include('user.urls')),
-    path('api/', include('portfolio.urls')),
+    path('api/token/', CreateTokenView.as_view(), name='token'),
+    path('api/me/', ManageUserView.as_view(), name='me'),
+    path('api/', include(router.urls)),
 ]

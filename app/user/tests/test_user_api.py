@@ -8,9 +8,9 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
-CREATE_USER_URL = reverse('user:user-list')
-CREATE_USER_TOKEN_URL = reverse('user:token')
-ME_URL = reverse('user:me')
+CREATE_USER_URL = reverse('user-list')
+CREATE_USER_TOKEN_URL = reverse('token')
+ME_URL = reverse('me')
 
 
 def create_user(**kwargs):

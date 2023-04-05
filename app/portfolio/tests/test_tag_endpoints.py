@@ -12,11 +12,11 @@ from portfolio import models
 
 
 def get_tag_list_create_url():
-    return reverse('portfolio:tag-list')
+    return reverse('tag-list')
 
 
 def get_tag_detail_url(id):
-    return reverse('portfolio:tag-detail', kwargs={'pk': id})
+    return reverse('tag-detail', kwargs={'pk': id})
 
 
 class TagEndpointsTests(TestCase):

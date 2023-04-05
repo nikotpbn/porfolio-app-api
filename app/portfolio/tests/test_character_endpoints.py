@@ -15,11 +15,11 @@ from datetime import date
 
 
 def character_create_list_url():
-    return reverse('portfolio:character-list')
+    return reverse('character-list')
 
 
 def character_detail_url(id):
-    return reverse('portfolio:character-detail', kwargs={'pk': id})
+    return reverse('character-detail', kwargs={'pk': id})
 
 
 class PrivateEndpointsTests(TestCase):
@@ -34,6 +34,10 @@ class PrivateEndpointsTests(TestCase):
         self.client.force_authenticate(user=self.user)
 
     def test_character_create(self):
+        """
+        Test create character create endpoint
+        authenticated as admin
+        """
         payload = {
             'page_id': '12345',
             'name': 'Some Comic Character',
@@ -50,6 +54,10 @@ class PrivateEndpointsTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
     def test_character_update(self):
+        """
+        Test create character update endpoint
+        authenticated as admin
+        """
         c = models.Character.objects.create(
             page_id='12345',
             name='Some Comic Character',
@@ -63,6 +71,10 @@ class PrivateEndpointsTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_character_delete(self):
+        """
+        Test create character delete endpoint
+        authenticated as admin
+        """
         c = models.Character.objects.create(
             page_id='12345',
             name='Some Comic Character',
@@ -76,9 +88,10 @@ class PrivateEndpointsTests(TestCase):
 
 
 class PublicEndpointsTests(TestCase):
+    """Test character public endpoints"""
 
     def setUp(self):
-        user = get_user_model().objects.create_user(
+        self.user = get_user_model().objects.create_user(
             name='Test User',
             email='test@example.com',
             password='testpass123'
@@ -89,11 +102,15 @@ class PublicEndpointsTests(TestCase):
             sex='F',
             alive=True,
             first_appearance=date.today(),
-            created_by=user
+            created_by=self.user
         )
         self.client = APIClient()
 
     def test_character_list(self):
+        """
+        Test create character list endpoint
+        as an anonymous user
+        """
         self.c.save()
         res = self.client.get(character_create_list_url())
         qs = models.Character.objects.all()
@@ -106,7 +123,25 @@ class PublicEndpointsTests(TestCase):
         self.assertEqual(len(res.data), qs.count())
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
-    def test_character_create_fail(self):
+    def test_character_public_retrieve(self):
+        """
+        Test create character retrieve endpoint
+        as an anonymous user
+        """
+        self.c.save()
+        res = self.client.get(character_detail_url(self.c.id))
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['slug'], self.c.slug)
+        self.assertEqual(res.data['name'], self.c.name)
+        self.assertEqual(res.data['sex'], self.c.sex)
+        self.assertEqual(res.data['alive'], self.c.alive)
+
+    def test_character_public_create(self):
+        """
+        Test create character create endpoint
+        as an anonymous user
+        """
         payload = {
             'page_id': '12345',
             'name': 'Some Comic Character',
@@ -121,14 +156,64 @@ class PublicEndpointsTests(TestCase):
         self.assertEqual(models.Character.objects.count(), 0)
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_character_update_fail(self):
+    def test_character_restricted_create(self):
+        """
+        Test create character create endpoint
+        as a non admin authenticated user
+        """
+        self.client.force_authenticate(self.user)
+        payload = {
+            'page_id': '12345',
+            'name': 'Some Comic Character',
+            'sex': 'F',
+            'alive': True,
+            'first_appearance': date.today()
+        }
+        res = self.client.post(
+            character_create_list_url(),
+            payload
+        )
+        self.assertEqual(models.Character.objects.count(), 0)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_character_public_update(self):
+        """
+        Test create character update endpoint
+        as an anonymous user
+        """
         self.c.save()
         payload = {'name': 'Altered Comic Character Name'}
         res = self.client.patch(character_detail_url(self.c.id), payload)
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_character_delete_fail(self):
+    def test_character_restricted_update(self):
+        """
+        Test create character update endpoint
+        as a non admin authenticated user
+        """
+        self.client.force_authenticate(self.user)
+        self.c.save()
+        payload = {'name': 'Altered Comic Character Name'}
+        res = self.client.patch(character_detail_url(self.c.id), payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_character_public_delete(self):
+        """
+        Test create character delete endpoint
+        as an anonymous user
+        """
         self.c.save()
         res = self.client.delete(character_detail_url(self.c.id))
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_character_restricted_delete(self):
+        """
+        Test create character delete endpoint
+        as a non admin authenticated user
+        """
+        self.client.force_authenticate(self.user)
+        self.c.save()
+        res = self.client.delete(character_detail_url(self.c.id))
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)

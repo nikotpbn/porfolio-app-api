@@ -7,8 +7,7 @@ from portfolio.views import (
     ArtViewSet
 )
 
-app_name = 'portfolio'
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 
 router.register(r'characters', CharacterViewSet)
 router.register(r'tags', TagViewSet)

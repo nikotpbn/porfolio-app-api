@@ -12,17 +12,17 @@ from portfolio import models
 
 
 def artist_create_list_url():
-    return reverse('portfolio:artist-list')
+    return reverse('artist-list')
 
 
 def artist_detail_url(id):
-    return reverse('portfolio:artist-detail', kwargs={'pk': id})
+    return reverse('artist-detail', kwargs={'pk': id})
 
 
 class ArtistPrivateEndpointsTest(TestCase):
     """
     Test artist private endpoints.
-    Every endpoint should work while authenticated.
+    Every endpoint should work while authenticated (as admin).
     """
     def setUp(self):
         self.client = APIClient()
@@ -38,7 +38,10 @@ class ArtistPrivateEndpointsTest(TestCase):
         self.qs = models.Artist.objects.all()
 
     def test_artist_list(self):
-        """Test artist list endpoint."""
+        """
+        Test create character list endpoint
+        authenticated as admin
+        """
         self.artist.save()
         res = self.client.get(artist_create_list_url())
 
@@ -46,7 +49,10 @@ class ArtistPrivateEndpointsTest(TestCase):
         self.assertEqual(len(res.data), self.qs.count())
 
     def test_artist_create(self):
-        """Test artist create endpoint."""
+        """
+        Test create character create endpoint
+        authenticated as admin
+        """
         payload = {
             'name': 'Second Artist',
             'created_by': self.user.id
@@ -57,7 +63,10 @@ class ArtistPrivateEndpointsTest(TestCase):
         self.assertEqual(self.qs.count(), 1)
 
     def test_artist_retrieve(self):
-        """Test artist retrieve endpoint."""
+        """
+        Test create character retrieve endpoint
+        authenticated as admin
+        """
         self.artist.save()
         res = self.client.get(artist_detail_url(self.artist.id))
 
@@ -66,7 +75,10 @@ class ArtistPrivateEndpointsTest(TestCase):
         self.assertIn('slug', res.data)
 
     def test_artist_update(self):
-        """Test artist update endpoint."""
+        """
+        Test create character update endpoint
+        authenticated as admin
+        """
         self.artist.save()
         payload = {
             'name': 'Altered Artist'
@@ -78,7 +90,10 @@ class ArtistPrivateEndpointsTest(TestCase):
         self.assertEqual(self.artist.name, payload['name'])
 
     def test_artist_delete(self):
-        """Test artist delete endpoint."""
+        """
+        Test create character delete endpoint
+        authenticated as admin
+        """
         self.artist.save()
         res = self.client.delete(artist_detail_url(self.artist.id))
 
@@ -104,6 +119,10 @@ class ArtistPublicEndpointsTest(TestCase):
         self.qs = models.Artist.objects.all()
 
     def test_artist_public_list(self):
+        """
+        Test create character list endpoint
+        as an anonymous user
+        """
         self.artist.save()
         res = self.client.get(artist_create_list_url())
 
@@ -111,6 +130,10 @@ class ArtistPublicEndpointsTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_artist_public_retrieve(self):
+        """
+        Test create character retrieve endpoint
+        as an anonymous user
+        """
         self.artist.save()
         res = self.client.get(artist_detail_url(self.artist.id))
 
@@ -119,6 +142,10 @@ class ArtistPublicEndpointsTest(TestCase):
         self.assertIn('slug', res.data)
 
     def test_artist_public_create(self):
+        """
+        Test create character create endpoint
+        as an anonymous user
+        """
         payload = {
             'name': 'Test Artist',
             'created_by': self.user.id
@@ -127,7 +154,25 @@ class ArtistPublicEndpointsTest(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_Artist_restricted_create(self):
+        """
+        Test create character create endpoint
+        as a non admin authenticated user
+        """
+        self.client.force_authenticate(self.user)
+        payload = {
+            'name': 'Test Artist',
+            'created_by': self.user.id
+        }
+        res = self.client.post(artist_create_list_url(), payload)
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_artist_public_update(self):
+        """
+        Test create character update endpoint
+        as an anonymous user
+        """
         self.artist.save()
         payload = {
             'name': 'Altered Artist'
@@ -137,8 +182,38 @@ class ArtistPublicEndpointsTest(TestCase):
         self.artist.refresh_from_db()
         self.assertEqual(self.artist.name, 'Test Artist')
 
+    def test_artist_restricted_update(self):
+        """
+        Test create character update endpoint
+        as a non admin authenticated user
+        """
+        self.client.force_authenticate(self.user)
+        self.artist.save()
+        payload = {
+            'name': 'Altered Artist'
+        }
+        res = self.client.patch(artist_detail_url(self.artist.id), payload)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.artist.refresh_from_db()
+        self.assertEqual(self.artist.name, 'Test Artist')
+
     def test_artist_public_delete(self):
+        """
+        Test create character delete endpoint
+        as an anonymous user
+        """
         self.artist.save()
         res = self.client.delete(artist_detail_url(self.artist.id))
 
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_artist_restricted_delete(self):
+        """
+        Test create character delete endpoint
+        as a non admin authenticated user
+        """
+        self.artist.save()
+        self.client.force_authenticate(self.user)
+        res = self.client.delete(artist_detail_url(self.artist.id))
+
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
