@@ -6,12 +6,20 @@ import uuid
 import os
 
 
-def image_file_path(instance, filename):
-    ext = filename.split('.')[-1]
-    filename = "{}.{}".format(uuid.uuid4().hex, ext)
-    upload_path = os.path.join('uploads', 'image', filename)
+def art_image_file_path(instance, filename):
+    """Generate file path for new recipe image."""
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
 
-    return upload_path
+    return os.path.join('uploads', 'art', filename)
+
+
+def artist_image_file_path(instance, filename):
+    """Generate file path for new recipe image."""
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'artist', filename)
 
 
 def normalize_name(str):
@@ -64,7 +72,11 @@ class Character(models.Model):
 
 class Artist(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    image = models.ImageField(null=True, blank=True, upload_to=image_file_path)
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=artist_image_file_path
+    )
     instagram = models.CharField(max_length=128, blank=True, null=True)
     deviant = models.CharField(max_length=128, blank=True, null=True)
     twitter = models.CharField(max_length=128, blank=True, null=True)
@@ -94,7 +106,7 @@ class Art(models.Model):
     title = models.CharField(max_length=50)
     subtitle = models.CharField(max_length=100)
     description = models.TextField(blank=True)
-    image = models.ImageField(null=True, upload_to=image_file_path)
+    image = models.ImageField(null=True, upload_to=art_image_file_path)
     type = models.IntegerField(choices=TYPE_CHOICES)
     tags = models.ManyToManyField(Tag, blank=True)
     characters = models.ManyToManyField(Character, blank=True)

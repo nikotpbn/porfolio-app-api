@@ -7,12 +7,24 @@ from rest_framework.test import APIClient
 
 from portfolio import models
 
+import tempfile
+import os
+
+from PIL import Image
+
+
+def image_upload_url(id):
+    """Create and return an art image upload URL."""
+    return reverse('art-upload-image', kwargs={'pk': id})
+
 
 def art_create_list_url():
+    """Create and return an art list or create URL."""
     return reverse('art-list')
 
 
 def art_detail_url(id):
+    """Create and return an art detail URL."""
     return reverse('art-detail', kwargs={'pk': id})
 
 
@@ -206,3 +218,53 @@ class ArtPublicEndpointsTest(TestCase):
         res = self.client.delete(art_detail_url(self.art.id))
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class ImageUploadTests(TestCase):
+    """Tests for the image upload API."""
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_superuser(
+            'user@example.com',
+            'testpass123'
+        )
+        self.client.force_authenticate(self.user)
+        self.artist = models.Artist.objects.create(
+            name='Test Artist',
+            created_by=self.user
+        )
+        self.art = models.Art.objects.create(
+            title='Test Art Title',
+            subtitle='Test Art Subtitle',
+            type=1,
+            artist=self.artist,
+            created_by=self.user
+        )
+
+    def tearDown(self):
+        """Test uploading an image to a art."""
+        self.art.image.delete()
+
+    def test_art_image_upload(self):
+        """Test uploading an image to a art."""
+        url = image_upload_url(self.art.id)
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as image_file:
+            img = Image.new('RGB', (10, 10))
+            img.save(image_file, format='JPEG')
+            image_file.seek(0)
+            payload = {'image': image_file}
+            res = self.client.post(url, payload, format='multipart')
+
+        self.art.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('image', res.data)
+        self.assertTrue(os.path.exists(self.art.image.path))
+
+    def test_art_image_upload_bad_request(self):
+        """Test uploading invalid image."""
+        url = image_upload_url(self.art.id)
+        payload = {'image': 'notanimage'}
+        res = self.client.post(url, payload, format='multipart')
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255, unique=True)),
-                ('image', models.ImageField(blank=True, null=True, upload_to=portfolio.models.image_file_path)),
+                ('image', models.ImageField(blank=True, null=True, upload_to=portfolio.models.artist_image_file_path)),
                 ('instagram', models.CharField(blank=True, max_length=128, null=True)),
                 ('deviant', models.CharField(blank=True, max_length=128, null=True)),
                 ('twitter', models.CharField(blank=True, max_length=128, null=True)),

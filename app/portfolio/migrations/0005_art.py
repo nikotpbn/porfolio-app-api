@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=50)),
                 ('subtitle', models.CharField(max_length=100)),
                 ('description', models.TextField(blank=True)),
-                ('image', models.ImageField(null=True, upload_to=portfolio.models.image_file_path)),
+                ('image', models.ImageField(null=True, upload_to=portfolio.models.art_image_file_path)),
                 ('type', models.IntegerField(choices=[(1, 'Drawing'), (2, 'Painting'), (3, 'Sculpture'), (4, 'Tatoo'), (5, 'Photo'), (6, 'Digital')])),
                 ('created_at', models.DateField(default=django.utils.timezone.now)),
                 ('artist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='artworks', to='portfolio.artist')),

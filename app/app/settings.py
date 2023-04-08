@@ -147,4 +147,5 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Art Portfolios API',
     'DESCRIPTION': 'Collection of professional artists and artwork',
     'PREPROCESSING_HOOKS': ['core.hooks.custom_preprocessing_hook'],
+    'COMPONENT_SPLIT_REQUEST': True,
 }

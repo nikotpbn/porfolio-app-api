@@ -5,6 +5,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from portfolio import models
 
+from unittest.mock import patch
+
 from datetime import date
 
 
@@ -113,3 +115,21 @@ class PortfolioModelsTests(TestCase):
             )
             self.assertEqual(art.title, expected_title)
             self.assertEqual(art.subtitle, expected_subtitle)
+
+    @patch('portfolio.models.uuid.uuid4')
+    def test_artist_file_name_uuid(self, mock_uuid):
+        """Test generating artist image path"""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.artist_image_file_path(None, 'example.jpg')
+
+        self.assertEqual(file_path, f'uploads/artist/{uuid}.jpg')
+
+    @patch('portfolio.models.uuid.uuid4')
+    def test_art_filename_uuid(self, mock_uuid):
+        """Test generating art image path"""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = models.art_image_file_path(None, 'example.jpg')
+
+        self.assertEqual(file_path, f'uploads/art/{uuid}.jpg')

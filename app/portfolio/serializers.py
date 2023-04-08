@@ -28,6 +28,18 @@ class ArtistSerializer(serializers.ModelSerializer):
         }
 
 
+class ArtistImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading images to artists."""
+
+    class Meta:
+        model = models.Artist
+        fields = ['id', 'image']
+        read_only_fields = ['id']
+        extra_kwargs = {
+            'image': {'required': True}
+        }
+
+
 class ArtSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Art
@@ -35,4 +47,16 @@ class ArtSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'tags': {'required': False},
             'characters': {'required': False},
+        }
+
+
+class ArtImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading images to art."""
+
+    class Meta:
+        model = models.Art
+        fields = ['id', 'image']
+        read_only_fields = ['id']
+        extra_kwargs = {
+            'image': {'required': True}
         }
