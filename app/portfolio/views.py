@@ -23,6 +23,13 @@ from rest_framework.permissions import (
 )
 from rest_framework.authentication import TokenAuthentication
 
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes
+)
+
 
 class CharacterViewSet(viewsets.ModelViewSet):
     """
@@ -46,6 +53,22 @@ class TagViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser, IsAuthenticated]
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'tags',
+                OpenApiTypes.STR,
+                description='Comma separated list of IDs to filter',
+            ),
+            OpenApiParameter(
+                'artist',
+                OpenApiTypes.STR,
+                description='Comma separated list of IDs to filter'
+            )
+        ]
+    )
+)
 class ArtistViewSet(viewsets.ModelViewSet):
     """
     View to CRUD artists
@@ -82,6 +105,24 @@ class ArtViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     queryset = Art.objects.all()
     serializer_class = ArtSerializer
+
+    def _params_to_ints(self, qs):
+        """Convert a list of string to integers"""
+        return [int(str_id) for str_id in qs.split(',')]
+
+    def get_queryset(self):
+        """Retrieve arts filtering by tags or artists when applicable"""
+        tags = self.request.query_params.get('tags')
+        artists = self.request.query_params.get('artists')
+        queryset = self.queryset
+        if tags:
+            tags_ids = self._params_to_ints(tags)
+            queryset = queryset.filter(tags__id__in=tags_ids)
+        if artists:
+            artists_ids = self._params_to_ints(artists)
+            queryset = queryset.filter(artist__id__in=artists_ids)
+
+        return queryset.order_by('id').distinct()
 
     def get_serializer_class(self):
         """return the serializer class for request"""

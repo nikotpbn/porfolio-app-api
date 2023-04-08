@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from portfolio import models
+from portfolio import serializers
 
 import tempfile
 import os
@@ -218,6 +219,71 @@ class ArtPublicEndpointsTest(TestCase):
         res = self.client.delete(art_detail_url(self.art.id))
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_art_filter_by_tags(self):
+        """Test filtering art by tags"""
+        self.art.save()
+        another_artist = models.Artist.objects.create(
+            name='Another Artist',
+            created_by=self.user
+        )
+        another_art = models.Art.objects.create(
+            title='Another Art Title',
+            subtitle='Another Art Subtitle',
+            type=1,
+            artist=another_artist,
+            created_by=self.user
+        )
+        tag = models.Tag.objects.create(
+            name='Tag One',
+            description='Tag One Description',
+            created_by=self.user
+        )
+        self.art.tags.add(tag)
+
+        params = {'tags': f'{tag.id}'}
+        res = self.client.get(art_create_list_url(), params)
+
+        s1 = serializers.ArtSerializer(self.art)
+        s2 = serializers.ArtSerializer(another_art)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn(s1.data, res.data)
+        self.assertNotIn(s2.data, res.data)
+
+    def test_art_filter_by_artist(self):
+        """Test filtering art by artist"""
+        self.art.save()
+        another_art = models.Art.objects.create(
+            title='Another Art Title',
+            subtitle='Another Art Subtitle',
+            type=1,
+            artist=self.artist,
+            created_by=self.user
+        )
+        alternative_artist = models.Artist.objects.create(
+            name='Another Artist',
+            created_by=self.user
+        )
+        alternative_art = models.Art.objects.create(
+            title='Another Art Title',
+            subtitle='Another Art Subtitle',
+            type=1,
+            artist=alternative_artist,
+            created_by=self.user
+        )
+
+        params = {'artists': f'{self.artist.id}'}
+        res = self.client.get(art_create_list_url(), params)
+
+        s1 = serializers.ArtSerializer(self.art)
+        s2 = serializers.ArtSerializer(another_art)
+        s3 = serializers.ArtSerializer(alternative_art)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn(s1.data, res.data)
+        self.assertIn(s2.data, res.data)
+        self.assertNotIn(s3.data, res.data)
 
 
 class ImageUploadTests(TestCase):
