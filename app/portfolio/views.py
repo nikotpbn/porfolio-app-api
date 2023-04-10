@@ -57,14 +57,9 @@ class TagViewSet(viewsets.ModelViewSet):
     list=extend_schema(
         parameters=[
             OpenApiParameter(
-                'tags',
+                'name',
                 OpenApiTypes.STR,
-                description='Comma separated list of IDs to filter',
-            ),
-            OpenApiParameter(
-                'artist',
-                OpenApiTypes.STR,
-                description='Comma separated list of IDs to filter'
+                description='String or partial string to filter',
             )
         ]
     )
@@ -78,6 +73,16 @@ class ArtistViewSet(viewsets.ModelViewSet):
     authentication_classes = [TokenAuthentication]
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+
+    def get_queryset(self):
+        """Retrieve artists filtering by name when applicable"""
+        name = self.request.query_params.get('name')
+        queryset = self.queryset
+
+        if name:
+            queryset = queryset.filter(name__contains=name)
+
+        return queryset.order_by('id')
 
     def get_serializer_class(self):
         """return the serializer class for request"""
@@ -96,6 +101,22 @@ class ArtistViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'tags',
+                OpenApiTypes.STR,
+                description='Comma separated list of IDs to filter',
+            ),
+            OpenApiParameter(
+                'artist',
+                OpenApiTypes.STR,
+                description='Comma separated list of IDs to filter'
+            )
+        ]
+    )
+)
 class ArtViewSet(viewsets.ModelViewSet):
     """
     View to CRUD art

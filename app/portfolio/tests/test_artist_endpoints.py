@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from portfolio import models
+from portfolio import models, serializers
 
 import tempfile
 import os
@@ -229,6 +229,29 @@ class ArtistPublicEndpointsTest(TestCase):
         res = self.client.delete(artist_detail_url(self.artist.id))
 
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_artist_filter_by_name(self):
+        """Test filter artists by name"""
+        self.artist.save()
+        another_artist = models.Artist.objects.create(
+            name='Another Artist',
+            created_by=self.user
+        )
+
+        s1 = serializers.ArtistSerializer(self.artist)
+        s2 = serializers.ArtistSerializer(another_artist)
+
+        params = {'name': 'Test'}
+        res = self.client.get(artist_create_list_url(), params)
+
+        self.assertIn(s1.data, res.data)
+        self.assertNotIn(s2.data, res.data)
+
+        params = {'name': 'Artist'}
+        res = self.client.get(artist_create_list_url(), params)
+
+        self.assertIn(s1.data, res.data)
+        self.assertIn(s2.data, res.data)
 
 
 class ArtistImageUploadTests(TestCase):
