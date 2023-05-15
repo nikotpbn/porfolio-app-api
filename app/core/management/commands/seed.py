@@ -7,18 +7,24 @@ from portfolio.models import Tag, Character
 from datetime import date
 import json
 
+from django.contrib.auth import get_user_model
+
 
 class Command(BaseCommand):
     """Django command to read files and populate data"""
 
     def handle(self, *args, **options):
         """Entrypoint for command"""
+        self.admin = get_user_model().objects.get(id=1)
 
-        self.create_characters()
-        self.create_tags()
-        # self.create_artists(data['artists'])
+        if self.admin.is_superuser:
+            self.create_characters()
+            # self.create_tags()
+            # self.create_artists(data['artists'])
 
-        self.stdout.write(self.style.SUCCESS('Seeding Finished!'))
+            self.stdout.write(self.style.SUCCESS('Seeding Finished!'))
+        else:
+            self.stdout.wirte(self.style.ERROR('User is not admin.'))
 
     def create_characters(self):
 
@@ -38,6 +44,7 @@ class Command(BaseCommand):
                 obj['first_appearance'] = date(
                     int(obj['first_appearance']), 1, 1
                 )
+                obj['created_by'] = self.admin
                 character = Character.objects.create(**obj)
                 self.stdout.write(f'Creating Character Object: \
                                   {character.name}')
