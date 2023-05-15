@@ -217,3 +217,26 @@ class PublicEndpointsTests(TestCase):
         self.c.save()
         res = self.client.delete(character_detail_url(self.c.id))
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_character_name_filter(self):
+        """
+        Test character filter by name
+        """
+        self.client.force_authenticate(self.user)
+        self.c.save()
+        models.Character.objects.create(
+            page_id='12345',
+            name='Test Comic Character',
+            sex='F',
+            alive=True,
+            first_appearance=date.today(),
+            created_by=self.user
+        )
+
+        res = self.client.get(character_create_list_url(), {'name': 'Comic'})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 2)
+
+        res = self.client.get(character_create_list_url(), {'name': 'Test'})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res.data), 1)

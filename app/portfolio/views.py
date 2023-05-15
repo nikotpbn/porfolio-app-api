@@ -41,6 +41,16 @@ class CharacterViewSet(viewsets.ModelViewSet):
     queryset = Character.objects.all()
     serializer_class = CharacterSerializer
 
+    def get_queryset(self):
+        """Retrieve characters filtering  by name when applicable"""
+        filter = self.request.query_params.get('name')
+        queryset = self.queryset
+
+        if filter:
+            queryset = queryset.filter(name__contains=filter)
+
+        return queryset
+
 
 class TagViewSet(viewsets.ModelViewSet):
     """
