@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-js(x1+#ji$3-z+s%_c*g-slx$b1ipw^ag%=l3^p3ay6^v(yk21
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '192.168.1.244'
+]
 
 
 # Application definition
@@ -40,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'drf_spectacular',
     'portfolio',
     'core',
@@ -49,6 +52,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -149,3 +153,9 @@ SPECTACULAR_SETTINGS = {
     'PREPROCESSING_HOOKS': ['core.hooks.custom_preprocessing_hook'],
     'COMPONENT_SPLIT_REQUEST': True,
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'http://192.168.1.244:3000',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
