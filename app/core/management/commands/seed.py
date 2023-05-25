@@ -15,45 +15,66 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Entrypoint for command"""
+        # TODO: Create a superuser if does not exist.
         self.admin = get_user_model().objects.get(id=1)
 
         if self.admin.is_superuser:
-            self.create_characters()
+            self.create_dc_characters()
+            self.create_marvel_character()
             # self.create_tags()
             # self.create_artists(data['artists'])
 
-            self.stdout.write(self.style.SUCCESS('Seeding Finished!'))
+            self.stdout.write(self.style.SUCCESS("Seeding Finished!"))
         else:
-            self.stdout.wirte(self.style.ERROR('User is not admin.'))
+            self.stdout.wirte(self.style.ERROR("User is not admin."))
 
-    def create_characters(self):
-
+    def create_dc_characters(self):
         data = {}
-        with open('/app/core/seed_data/characters.json', 'r') as file:
+        with open("/app/core/seed_data/dc_characters.json", "r") as file:
             data = json.load(file)
 
         for obj in data:
             try:
-                character = Character.objects.get(name=obj['name'])
+                character = Character.objects.get(name=obj["name"])
                 self.stdout.write(
-                    f'Character {character.name} already exists, \
-                    skipping creation...'
+                    self.style.WARNING(
+                        f"Character {character.name} already exists, \
+                    skipping creation..."
+                    )
                 )
 
             except ObjectDoesNotExist:
-                obj['first_appearance'] = date(
-                    int(obj['first_appearance']), 1, 1
-                )
-                obj['created_by'] = self.admin
+                obj["first_appearance"] = date(int(obj["first_appearance"]), 1, 1)
+                obj["created_by"] = self.admin
                 character = Character.objects.create(**obj)
-                self.stdout.write(f'Creating Character Object: \
-                                  {character.name}')
+                self.stdout.write(
+                    f"Creating Character Object: \
+                                  {character.name}"
+                )
 
-        self.stdout.write(self.style.SUCCESS('Finished seeding characters.'))
+        self.stdout.write(self.style.SUCCESS("Finished seeding DC characters."))
+
+    def create_marvel_character(self):
+        with open("/app/core/seed_data/marvel_characters.json", "r") as file:
+            data = json.load(file)
+
+        for obj in data:
+            try:
+                character = Character.objects.get(name=obj["name"])
+                self.stdout.write(
+                    f"Character {character.name} already exists, skipping creation..."
+                )
+            except ObjectDoesNotExist:
+                obj["first_appearance"] = date(int(obj["first_appearance"]), 1, 1)
+                obj["created_by"] = self.admin
+                character = Character.objects.create(**obj)
+                self.stdout.write(f"Creating Charater Object: {character.name}")
+
+        self.stdout.write(self.style.SUCCESS("Finished seeding DC characters."))
 
     def create_tags(self):
         data = {}
-        with open('/app/core/seed_data/tags.json', 'r') as file:
+        with open("/app/core/seed_data/tags.json", "r") as file:
             data = json.load(file)
 
         for obj in data:
@@ -61,7 +82,7 @@ class Command(BaseCommand):
 
             if not created:
                 self.stdout.write(
-                    f'Tag {tag.name} already exists, skipping creation...'
+                    f"Tag {tag.name} already exists, skipping creation..."
                 )
             else:
-                self.stdout.write(f'Creating Tag Object: {tag.name}')
+                self.stdout.write(f"Creating Tag Object: {tag.name}")
