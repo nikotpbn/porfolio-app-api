@@ -1,5 +1,5 @@
 """
-Django command to seed initital data
+Django custom command to seed initital data
 """
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,13 +15,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Entrypoint for command"""
-        # TODO: Create a superuser if does not exist.
         self.admin = get_user_model().objects.get(id=1)
 
         if self.admin.is_superuser:
             self.create_dc_characters()
             self.create_marvel_character()
-            # self.create_tags()
+            self.create_tags()
             # self.create_artists(data['artists'])
 
             self.stdout.write(self.style.SUCCESS("Seeding Finished!"))
@@ -44,7 +43,10 @@ class Command(BaseCommand):
                 )
 
             except ObjectDoesNotExist:
-                obj["first_appearance"] = date(int(obj["first_appearance"]), 1, 1)
+                obj["first_appearance"] = date(
+                    int(obj["first_appearance"]),
+                    1, 1
+                )
                 obj["created_by"] = self.admin
                 character = Character.objects.create(**obj)
                 self.stdout.write(
@@ -52,7 +54,9 @@ class Command(BaseCommand):
                                   {character.name}"
                 )
 
-        self.stdout.write(self.style.SUCCESS("Finished seeding DC characters."))
+        self.stdout.write(
+            self.style.SUCCESS("Finished seeding DC characters.")
+        )
 
     def create_marvel_character(self):
         with open("/app/core/seed_data/marvel_characters.json", "r") as file:
@@ -62,15 +66,23 @@ class Command(BaseCommand):
             try:
                 character = Character.objects.get(name=obj["name"])
                 self.stdout.write(
-                    f"Character {character.name} already exists, skipping creation..."
+                    f"Character {character.name} \
+                        already exists, skipping creation..."
                 )
             except ObjectDoesNotExist:
-                obj["first_appearance"] = date(int(obj["first_appearance"]), 1, 1)
+                obj["first_appearance"] = date(
+                    int(obj["first_appearance"]),
+                    1, 1
+                )
                 obj["created_by"] = self.admin
                 character = Character.objects.create(**obj)
-                self.stdout.write(f"Creating Charater Object: {character.name}")
+                self.stdout.write(
+                    f"Creating Charater Object: {character.name}"
+                )
 
-        self.stdout.write(self.style.SUCCESS("Finished seeding DC characters."))
+        self.stdout.write(
+            self.style.SUCCESS("Finished seeding DC characters.")
+        )
 
     def create_tags(self):
         data = {}

@@ -7,7 +7,7 @@ import os
 
 
 def art_image_file_path(instance, filename):
-    """Generate file path for new recipe image."""
+    """Generate file path for new art image."""
     ext = os.path.splitext(filename)[1]
     filename = f'{uuid.uuid4()}{ext}'
 
@@ -15,7 +15,7 @@ def art_image_file_path(instance, filename):
 
 
 def artist_image_file_path(instance, filename):
-    """Generate file path for new recipe image."""
+    """Generate file path for new artist image."""
     ext = os.path.splitext(filename)[1]
     filename = f'{uuid.uuid4()}{ext}'
 
@@ -23,6 +23,7 @@ def artist_image_file_path(instance, filename):
 
 
 def normalize_name(str):
+    """Auxiliar function to captalize the first letters of a name"""
     return str.lower().strip().title()
 
 

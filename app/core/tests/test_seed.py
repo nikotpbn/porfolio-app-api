@@ -30,7 +30,7 @@ class SeedTests(SimpleTestCase):
         self.assertEqual(result, 'artists_file')
 
     @patch(
-            'core.management.commands.seed.Command.create_characters',
+            'core.management.commands.seed.Command.create_dc_characters',
             return_value='Finished characters seed.'
     )
     def test_character_seed_command(self, patched_create_characters):
