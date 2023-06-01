@@ -43,10 +43,11 @@ class TagEndpointsTests(TestCase):
         qs = models.Tag.objects.all()
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(qs.count(), len(res.data))
-        self.assertEqual(res.data[0]['name'], 'Test Tag')
-        self.assertEqual(res.data[0]['description'], 'Test tag description')
-        self.assertEqual(res.data[0]['created_by'], self.user.id)
+        self.assertEqual(qs.count(), len(res.data['results']))
+        self.assertEqual(res.data['results'][0]['name'], 'Test Tag')
+        self.assertEqual(res.data['results'][0]['description'],
+                         'Test tag description')
+        self.assertEqual(res.data['results'][0]['created_by'], self.user.id)
 
     def test_create_tag_success(self):
         """Test creating a tag while logged in as admin."""

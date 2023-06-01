@@ -58,7 +58,7 @@ class ArtistPrivateEndpointsTest(TestCase):
         res = self.client.get(artist_create_list_url())
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), self.qs.count())
+        self.assertEqual(len(res.data['results']), self.qs.count())
 
     def test_artist_create(self):
         """
@@ -138,7 +138,7 @@ class ArtistPublicEndpointsTest(TestCase):
         self.artist.save()
         res = self.client.get(artist_create_list_url())
 
-        self.assertEqual(len(res.data), self.qs.count())
+        self.assertEqual(len(res.data['results']), self.qs.count())
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_artist_public_retrieve(self):
@@ -244,14 +244,14 @@ class ArtistPublicEndpointsTest(TestCase):
         params = {'name': 'Test'}
         res = self.client.get(artist_create_list_url(), params)
 
-        self.assertIn(s1.data, res.data)
-        self.assertNotIn(s2.data, res.data)
+        self.assertIn(s1.data, res.data['results'])
+        self.assertNotIn(s2.data, res.data['results'])
 
         params = {'name': 'Artist'}
         res = self.client.get(artist_create_list_url(), params)
 
-        self.assertIn(s1.data, res.data)
-        self.assertIn(s2.data, res.data)
+        self.assertIn(s1.data, res.data['results'])
+        self.assertIn(s2.data, res.data['results'])
 
 
 class ArtistImageUploadTests(TestCase):

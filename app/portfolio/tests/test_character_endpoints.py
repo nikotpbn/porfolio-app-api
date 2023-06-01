@@ -115,12 +115,12 @@ class PublicEndpointsTests(TestCase):
         res = self.client.get(character_create_list_url())
         qs = models.Character.objects.all()
 
-        self.assertEqual(dict(res.data[0])['slug'], self.c.slug)
-        self.assertEqual(dict(res.data[0])['name'], self.c.name)
-        self.assertEqual(dict(res.data[0])['sex'], self.c.sex)
-        self.assertEqual(dict(res.data[0])['alive'], self.c.alive)
+        self.assertEqual(dict(res.data['results'][0])['slug'], self.c.slug)
+        self.assertEqual(dict(res.data['results'][0])['name'], self.c.name)
+        self.assertEqual(dict(res.data['results'][0])['sex'], self.c.sex)
+        self.assertEqual(dict(res.data['results'][0])['alive'], self.c.alive)
 
-        self.assertEqual(len(res.data), qs.count())
+        self.assertEqual(len(res.data['results']), qs.count())
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_character_public_retrieve(self):
@@ -235,8 +235,8 @@ class PublicEndpointsTests(TestCase):
 
         res = self.client.get(character_create_list_url(), {'name': 'Comic'})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 2)
+        self.assertEqual(len(res.data['results']), 2)
 
         res = self.client.get(character_create_list_url(), {'name': 'Test'})
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 1)
+        self.assertEqual(len(res.data['results']), 1)

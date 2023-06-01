@@ -57,7 +57,7 @@ class ArtPrivateEndpointsTests(TestCase):
         res = self.client.get(art_create_list_url())
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), self.qs.count())
+        self.assertEqual(len(res.data['results']), self.qs.count())
 
     def test_art_retrieve_endpoint(self):
         self.art.save()
@@ -146,7 +146,7 @@ class ArtPublicEndpointsTest(TestCase):
         res = self.client.get(art_create_list_url())
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), self.qs.count())
+        self.assertEqual(len(res.data['results']), self.qs.count())
 
     def test_art_retrieve_public_endpoint(self):
         self.art.save()
@@ -248,8 +248,8 @@ class ArtPublicEndpointsTest(TestCase):
         s2 = serializers.ArtSerializer(another_art)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertIn(s1.data, res.data)
-        self.assertNotIn(s2.data, res.data)
+        self.assertIn(s1.data, res.data['results'])
+        self.assertNotIn(s2.data, res.data['results'])
 
     def test_art_filter_by_artist(self):
         """Test filtering art by artist"""
@@ -281,9 +281,9 @@ class ArtPublicEndpointsTest(TestCase):
         s3 = serializers.ArtSerializer(alternative_art)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertIn(s1.data, res.data)
-        self.assertIn(s2.data, res.data)
-        self.assertNotIn(s3.data, res.data)
+        self.assertIn(s1.data, res.data['results'])
+        self.assertIn(s2.data, res.data['results'])
+        self.assertNotIn(s3.data, res.data['results'])
 
 
 class ImageUploadTests(TestCase):
