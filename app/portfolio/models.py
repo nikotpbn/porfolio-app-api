@@ -53,7 +53,7 @@ class Character(models.Model):
 
     page_id = models.CharField(max_length=10)
     name = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=255, unique=True)
     sex = models.CharField(max_length=1, choices=Sex.choices)
     alive = models.BooleanField()
     first_appearance = models.DateField()
