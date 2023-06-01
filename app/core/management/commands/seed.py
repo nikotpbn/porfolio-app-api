@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
         if self.admin.is_superuser:
             self.create_dc_characters()
-            self.create_marvel_character()
+            self.create_marvel_characters()
             self.create_tags()
             # self.create_artists(data['artists'])
 
@@ -58,7 +58,7 @@ class Command(BaseCommand):
             self.style.SUCCESS("Finished seeding DC characters.")
         )
 
-    def create_marvel_character(self):
+    def create_marvel_characters(self):
         with open("/app/core/seed_data/marvel_characters.json", "r") as file:
             data = json.load(file)
 

@@ -31,12 +31,22 @@ class SeedTests(SimpleTestCase):
 
     @patch(
             'core.management.commands.seed.Command.create_dc_characters',
-            return_value='Finished characters seed.'
+            return_value='Finished DC characters seed.'
     )
-    def test_character_seed_command(self, patched_create_characters):
+    def test_dc_character_seed_command(self, patched_character_creation_fnc):
         self.assertEqual(
-            patched_create_characters.return_value,
-            'Finished characters seed.'
+            patched_character_creation_fnc.return_value,
+            'Finished DC characters seed.'
+        )
+
+    @patch(
+            'core.management.commands.seed.Command.create_marvel_characters',
+            return_value='Finished Marvel characters seed.'
+    )
+    def test_marv_character_seed_command(self, patched_character_creation_fnc):
+        self.assertEqual(
+            patched_character_creation_fnc.return_value,
+            'Finished Marvel characters seed.'
         )
 
     @patch(
