@@ -8,7 +8,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from portfolio import models, serializers
+from portfolio import models
+from portfolio.api import serializers
 
 import tempfile
 import os

@@ -4,7 +4,7 @@ from portfolio.models import (
     Artist,
     Art
 )
-from portfolio.serializers import (
+from portfolio.api.serializers import (
     CharacterSerializer,
     TagSerializer,
     ArtistSerializer,

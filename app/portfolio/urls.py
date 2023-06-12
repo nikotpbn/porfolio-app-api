@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from portfolio.views import (
+from portfolio.api.views import (
     CharacterViewSet,
     TagViewSet,
     ArtistViewSet,
