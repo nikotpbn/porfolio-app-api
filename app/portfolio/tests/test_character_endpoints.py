@@ -41,6 +41,7 @@ class PrivateEndpointsTests(TestCase):
         payload = {
             'page_id': '12345',
             'name': 'Some Comic Character',
+            'slug': 'some-comic-character',
             'sex': 'F',
             'alive': True,
             'first_appearance': date.today(),
@@ -61,6 +62,7 @@ class PrivateEndpointsTests(TestCase):
         c = models.Character.objects.create(
             page_id='12345',
             name='Some Comic Character',
+            slug='some-comic-character',
             sex='F',
             alive=True,
             first_appearance=date.today(),
@@ -78,6 +80,7 @@ class PrivateEndpointsTests(TestCase):
         c = models.Character.objects.create(
             page_id='12345',
             name='Some Comic Character',
+            slug='some-comic-character',
             sex='F',
             alive=True,
             first_appearance=date.today(),
@@ -99,6 +102,7 @@ class PublicEndpointsTests(TestCase):
         self.c = models.Character(
             page_id='12345',
             name='Some Comic Character',
+            slug='some-comic-character',
             sex='F',
             alive=True,
             first_appearance=date.today(),
@@ -227,6 +231,7 @@ class PublicEndpointsTests(TestCase):
         models.Character.objects.create(
             page_id='12345',
             name='Test Comic Character',
+            slug='test-comic-character',
             sex='F',
             alive=True,
             first_appearance=date.today(),

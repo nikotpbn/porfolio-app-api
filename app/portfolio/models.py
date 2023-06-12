@@ -67,7 +67,6 @@ class Character(models.Model):
 
     def save(self, *args, **kwargs):
         self.name = normalize_name(self.name)
-        self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
 

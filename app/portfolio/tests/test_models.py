@@ -25,6 +25,7 @@ class PortfolioModelsTests(TestCase):
         character = models.Character.objects.create(
             page_id='12345',
             name='Some Comic Character',
+            slug='some-comic-character',
             sex='F',
             alive=True,
             first_appearance=date.today(),
@@ -33,7 +34,7 @@ class PortfolioModelsTests(TestCase):
 
         self.assertEqual(character.slug, 'some-comic-character')
 
-        character.name = 'Altered Character Name'
+        character.slug = 'altered-character-name'
         character.save()
         character.refresh_from_db()
 
@@ -42,15 +43,28 @@ class PortfolioModelsTests(TestCase):
     def test_character_creation_name(self):
         """Test normalize_name on character .save method"""
         sample_names = [
-            [' ChaRacter ONE NamE', 'Character One Name'],
-            ['CHARACTER twO NAME ', 'Character Two Name'],
-            [' character ThreE NAME ', 'Character Three Name']
+            [
+                ' ChaRacter ONE NamE',
+                'Character One Name',
+                'character-one-name'
+            ],
+            [
+                'CHARACTER twO NAME ',
+                'Character Two Name',
+                'character-two-name'
+            ],
+            [
+                ' character ThreE NAME ',
+                'Character Three Name',
+                'character-three-name'
+            ]
         ]
 
-        for name, expected in sample_names:
+        for name, expected, slug in sample_names:
             character = models.Character.objects.create(
                 page_id='12345',
                 name=name,
+                slug=slug,
                 sex='F',
                 alive=True,
                 first_appearance=date.today(),
