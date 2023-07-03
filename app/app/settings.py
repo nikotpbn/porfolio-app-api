@@ -155,9 +155,10 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Art Portfolios API',
-    'DESCRIPTION': 'Collection of professional artists and artwork',
+    'DESCRIPTION': 'Collection of comic artists and their artwork',
     'PREPROCESSING_HOOKS': ['core.hooks.custom_preprocessing_hook'],
     'COMPONENT_SPLIT_REQUEST': True,
+    'AUTHENTICATION_WHITELIST': ['rest_framework.authentication.TokenAuthentication']
 }
 
 CORS_ALLOWED_ORIGINS = [
