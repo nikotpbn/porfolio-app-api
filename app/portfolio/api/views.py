@@ -98,6 +98,8 @@ class ArtistViewSet(viewsets.ModelViewSet):
         """return the serializer class for request"""
         if self.action == 'upload_image':
             return ArtistImageSerializer
+        if self.action == 'artworks':
+            return ArtSerializer
 
         return self.serializer_class
 
@@ -108,6 +110,14 @@ class ArtistViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(artist, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True)
+    def artworks(self, request, pk=None):
+        """Fetch Artist related work"""
+        artist = self.get_object()
+        artworks = artist.artworks.all()
+        serializer = self.get_serializer(artworks, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
