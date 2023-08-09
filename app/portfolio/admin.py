@@ -7,7 +7,14 @@ class ArtistAdmin(admin.ModelAdmin):
 class CharacterAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
+class TagAdmin(admin.ModelAdmin):
+    search_fields = ['name']
+
+class ArtAdmin(admin.ModelAdmin):
+    search_fields = ['title']
+    filter_horizontal = ['characters']
+
 admin.site.register(models.Character, CharacterAdmin)
-admin.site.register(models.Tag)
+admin.site.register(models.Tag, TagAdmin)
 admin.site.register(models.Artist, ArtistAdmin)
-admin.site.register(models.Art)
+admin.site.register(models.Art, ArtAdmin)
